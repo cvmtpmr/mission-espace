@@ -1,39 +1,32 @@
-import { NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import Link from "next/link";
 
-export async function POST(req: Request) {
-  const supabase = await createSupabaseServerClient();
+export default function LinkChildPage() {
+  return (
+    <main style={{ padding: "2rem", maxWidth: 600, margin: "0 auto" }}>
+      <h1 style={{ fontSize: "1.8rem", marginBottom: "1rem" }}>
+        👨‍👩‍👧 Lier un enfant
+      </h1>
 
-  const { data: auth } = await supabase.auth.getUser();
-  const user = auth?.user;
-  if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      <p style={{ marginBottom: "1.5rem" }}>
+        Cette page permet au parent de lier un compte enfant à sa famille.
+      </p>
 
-  const { child_id } = await req.json();
-  if (!child_id || typeof child_id !== "string") {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
-  }
+      {/* À remplacer plus tard par ton vrai formulaire */}
+      <div
+        style={{
+          padding: "1rem",
+          border: "1px dashed #ccc",
+          borderRadius: "8px",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <p>🔧 Formulaire de liaison à venir</p>
+      </div>
 
-  // Vérifier que le demandeur est bien parent + récupérer family_id
-  const { data: parentProfile, error: parentErr } = await supabase
-    .from("profiles")
-    .select("role, family_id")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (parentErr) return NextResponse.json({ error: parentErr.message }, { status: 400 });
-  if (!parentProfile || parentProfile.role !== "parent" || !parentProfile.family_id) {
-    return NextResponse.json({ error: "Not allowed" }, { status: 403 });
-  }
-
-  // Rattacher l'enfant (policy RLS fera la sécurité)
-  const { error: updErr } = await supabase
-    .from("profiles")
-    .update({ family_id: parentProfile.family_id })
-    .eq("id", child_id)
-    .eq("role", "child")
-    .is("family_id", null);
-
-  if (updErr) return NextResponse.json({ error: updErr.message }, { status: 400 });
-
-  return NextResponse.json({ ok: true });
+      <Link href="/parent">
+        ⬅️ Retour au tableau de bord parent
+      </Link>
+    </main>
+  );
 }
+
