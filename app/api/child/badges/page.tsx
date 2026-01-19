@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type Badge = {
   title: string | null;
@@ -8,25 +8,21 @@ type Badge = {
   icon: string | null;
 };
 
-// Ici, d'après ton erreur TS, `badges` est un TABLEAU.
-// Donc on tape comme: badges: Badge[]
 type ChildBadgeRow = {
-  badges: Badge[]; // relation renvoyée sous forme de tableau
+  // d'après ton erreur TS précédente, c'est un tableau
+  badges: Badge[];
 };
 
 export default async function Page() {
-  const supabase = await createServerClient();
+  const supabase = await createSupabaseServerClient();
 
-  // Sécurité : si pas connecté -> login
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
 
-  // Récupération badges liés à l’enfant (selon ton schéma)
-  // Si tu filtres par child_id normalement, adapte ici.
-  const { data: badges, error } = await supabase
+  const { data: rows, error } = await supabase
     .from("child_badges")
     .select("badges(title, description, icon)")
     .returns<ChildBadgeRow[]>();
@@ -45,6 +41,8 @@ export default async function Page() {
     );
   }
 
+  const items = rows ?? [];
+
   return (
     <main style={{ padding: "2rem", maxWidth: 720, margin: "0 auto" }}>
       <h1 style={{ fontSize: "1.8rem", marginBottom: "0.5rem" }}>🏅 Badges</h1>
@@ -52,13 +50,12 @@ export default async function Page() {
         Voici les badges gagnés.
       </p>
 
-      {!badges || badges.length === 0 ? (
+      {items.length === 0 ? (
         <p>Aucun badge pour le moment ✨</p>
       ) : (
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {badges.map((b, i) => {
-            // Comme `badges` est un tableau, on prend le 1er élément
-            const badge = b.badges?.[0];
+          {items.map((b, i) => {
+            const badge = b.badges?.[0]; // relation renvoyée en tableau
 
             return (
               <li
@@ -93,5 +90,6 @@ export default async function Page() {
     </main>
   );
 }
+
 
 
