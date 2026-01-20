@@ -12,7 +12,7 @@ type Mission = {
 };
 
 const MISSIONS: Mission[] = [
-  { slug: "mercure", name: "Mercure", orbitClass: styles.orbit1, planetClass: styles.planet1, durationSec: 12 },
+  { slug: "mercure", name: "Mercure-1", orbitClass: styles.orbit1, planetClass: styles.planet1, durationSec: 12 },
   { slug: "venus", name: "Vénus", orbitClass: styles.orbit2, planetClass: styles.planet2, durationSec: 18 },
   { slug: "terre", name: "Terre", orbitClass: styles.orbit3, planetClass: styles.planet3, durationSec: 26 },
 ];
