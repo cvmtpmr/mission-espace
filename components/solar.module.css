@@ -1,27 +1,29 @@
 .space {
-  background: radial-gradient(circle at center, #05003a, #000);
+  transform: translateY(-120px);
+  background:
+  radial-gradient(circle at 20% 30%, rgba(255,255,255,0.12) 1px, transparent 1px),
+  radial-gradient(circle at 70% 60%, rgba(255,255,255,0.10) 1px, transparent 1px),
+  radial-gradient(circle at center, #05003a, #000);
+background-size: 240px 240px, 320px 320px, auto;
 }
+
 
 
 .sun {
-  box-shadow: 0 0 120px gold;
+  width: 120px;
+  height: 120px;
+  box-shadow: 0 0 200px rgba(255, 215, 0, 0.9);
 }
+
 
 .planet {
   box-shadow: 0 0 20px rgba(255,255,255,0.8);
 }
 
 .orbit {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  animation-name: spin;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  border: 2px solid rgba(255, 255, 255, 0.25); /* au lieu de dashed 0.12 */
 }
+
 
 .orbit1 {
   width: 200px;
@@ -41,31 +43,14 @@
   animation-duration: 30s;
 }
 
+.planet-1 { width: 26px; height: 26px; }
+.planet-2 { width: 34px; height: 34px; }
+.planet-3 { width: 42px; height: 42px; }
+
 .planet {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(255,255,255,0.6);
 }
 
-.planet1 {
-  width: 14px;
-  height: 14px;
-  background: #4fc3f7;
-}
-
-.planet2 {
-  width: 18px;
-  height: 18px;
-  background: #81c784;
-}
-
-.planet3 {
-  width: 22px;
-  height: 22px;
-  background: #ff8a65;
-}
 
 @keyframes spin {
   from {
