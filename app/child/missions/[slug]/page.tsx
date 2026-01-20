@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -7,17 +7,14 @@ export default async function MissionBySlugPage({
 }: {
   params: { slug: string };
 }) {
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return <div className="p-6">Pas connecté</div>;
-  }
+  if (!user) return <div className="p-6">Pas connecté</div>;
 
-  // On récupère la famille du child (adapter si ton projet stocke family_id ailleurs)
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("family_id")
@@ -39,10 +36,7 @@ export default async function MissionBySlugPage({
     .eq("slug", params.slug)
     .single();
 
-  if (missionError) {
-    // si pas trouvé ou RLS -> on affiche 404 (propre)
-    return notFound();
-  }
+  if (missionError || !mission) return notFound();
 
   return (
     <div className="p-6 space-y-4">
@@ -63,10 +57,11 @@ export default async function MissionBySlugPage({
           <b>Étoiles :</b> {mission.stars_reward}
         </div>
         <div>
-          <b>Date limite :</b> {mission.due_date}
+          <b>Date limite :</b> {String(mission.due_date)}
         </div>
       </div>
     </div>
   );
 }
+
 
