@@ -2,31 +2,40 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-export function createSupabaseServerClient() {
-  const cookieStore = cookies();
+export async function createSupabaseServerClient() {
+  // Next.js 16: cookies() est async
+  const cookieStore = await cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
+        get(name: string) {
+          return cookieStore.get(name)?.value;
         },
-        setAll(cookiesToSet) {
+        set(name: string, value: string, options: any) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
+            cookieStore.set({ name, value, ...options });
           } catch {
-            // si appelé depuis un Server Component "pur", Next peut bloquer set()
-            // ce n'est pas grave dans la plupart des cas
+            // Dans certains Server Components, set peut être interdit (OK)
+          }
+        },
+        remove(name: string, options: any) {
+          try {
+            // Certaines versions ont cookieStore.delete(name)
+            // mais set vide marche aussi
+            cookieStore.set({ name, value: "", ...options });
+          } catch {
+            // OK
           }
         },
       },
     }
   );
 }
+
+
 
 
 

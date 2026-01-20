@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import LogoutButton from "../components/LogoutButton";
 
 type ExerciseMini = {
   title: string | null;
@@ -102,6 +103,7 @@ export default async function ParentPage() {
           })}
         </div>
       )}
+      <LogoutButton />
     </main>
   );
 }

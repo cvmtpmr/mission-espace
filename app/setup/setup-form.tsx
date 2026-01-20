@@ -9,6 +9,7 @@ export default function SetupForm() {
   const supabase = createSupabaseBrowserClient();
 
   const [role, setRole] = useState<"parent" | "child">("parent");
+  const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -16,6 +17,14 @@ export default function SetupForm() {
     e.preventDefault();
     setLoading(true);
     setErrorMsg(null);
+
+    const cleanName = displayName.trim();
+
+    if (cleanName.length < 2) {
+      setLoading(false);
+      setErrorMsg("Le nom affiché doit contenir au moins 2 caractères.");
+      return;
+    }
 
     const {
       data: { user },
@@ -30,20 +39,21 @@ export default function SetupForm() {
 
     if (!user) {
       setLoading(false);
-      setErrorMsg("Non connecté.");
+      setErrorMsg("Non connecté. Merci de te reconnecter.");
+      router.replace("/login");
       return;
     }
 
-    // Upsert du profil (crée si absent)
+    // ✅ Upsert du profil : respecte la contrainte NOT NULL sur display_name
     const { error } = await supabase.from("profiles").upsert(
-  {
-    id: user.id,
-    role,
-    onboarded: true,
-  },
-  { onConflict: "id" }
-);
-
+      {
+        id: user.id,
+        role,
+        display_name: cleanName,
+        onboarded: true,
+      },
+      { onConflict: "id" }
+    );
 
     if (error) {
       setLoading(false);
@@ -51,7 +61,7 @@ export default function SetupForm() {
       return;
     }
 
-    // Recharge -> middleware + page d'accueil feront le routing
+    // ✅ On force un refresh pour que le middleware + SSR relisent le profil
     router.replace("/");
     router.refresh();
   }
@@ -63,6 +73,19 @@ export default function SetupForm() {
 
       <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
         <label style={{ display: "grid", gap: 6 }}>
+          <span>Nom affiché :</span>
+          <input
+            type="text"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="Ex : Alex"
+            required
+            minLength={2}
+            maxLength={40}
+          />
+        </label>
+
+        <label style={{ display: "grid", gap: 6 }}>
           <span>Je suis :</span>
           <select
             value={role}
@@ -73,9 +96,7 @@ export default function SetupForm() {
           </select>
         </label>
 
-        {errorMsg && (
-          <p style={{ color: "crimson" }}>❌ {errorMsg}</p>
-        )}
+        {errorMsg && <p style={{ color: "crimson" }}>❌ {errorMsg}</p>}
 
         <button type="submit" disabled={loading}>
           {loading ? "Enregistrement..." : "Continuer"}
@@ -84,3 +105,4 @@ export default function SetupForm() {
     </main>
   );
 }
+

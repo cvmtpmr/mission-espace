@@ -1,42 +1,26 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
+export function createSupabaseMiddlewareClient(req: NextRequest) {
+  const res = NextResponse.next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get: (name) => req.cookies.get(name)?.value,
-        set: (name, value, options) =>
-          res.cookies.set({ name, value, ...options }),
-        remove: (name, options) =>
-          res.cookies.set({ name, value: '', ...options }),
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            res.cookies.set({ name, value, ...options });
+          });
+        },
       },
     }
-  )
+  );
 
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) return res
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('id, role')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  if (!profile && !req.nextUrl.pathname.startsWith('/setup')) {
-    return NextResponse.redirect(new URL('/setup', req.url))
-  }
-
-  return res
-}
-
-export const config = {
-  matcher: ['/((?!_next|favicon.ico).*)'],
+  return { supabase, res };
 }
 
