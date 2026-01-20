@@ -71,12 +71,61 @@ export default async function MissionBySlugPage({
     );
   }
 
-  const { data: mission, error: missionError } = await supabase
-    .from("missions")
-    .select("id,title,slug,due_date,stars_reward,status,created_at,family_id")
-    .eq("family_id", profile.family_id)
-    .eq("slug", params.slug)
-    .single();
+  const { data: rows, error: rowsError } = await supabase
+  .from("missions")
+  .select("id,title,slug,family_id,due_date,stars_reward,status,created_at")
+  .eq("slug", params.slug);
+
+return (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      zIndex: 99999,
+      padding: 24,
+      background: "rgba(0,0,0,0.65)",
+      color: "white",
+      overflow: "auto",
+    }}
+  >
+    <div
+      style={{
+        maxWidth: 860,
+        margin: "0 auto",
+        background: "rgba(0,0,0,0.65)",
+        border: "1px solid rgba(255,255,255,0.2)",
+        borderRadius: 12,
+        padding: 16,
+      }}
+    >
+      <h1 style={{ fontSize: 24, fontWeight: 800 }}>DEBUG mission</h1>
+      <p>
+        <b>slug demandé :</b> {params.slug}
+      </p>
+      <p>
+        <b>profile.family_id :</b> {String(profile.family_id)}
+      </p>
+
+      <p>
+        <b>rowsError :</b> {rowsError ? rowsError.message : "aucune"}
+      </p>
+      <p>
+        <b>Nombre de missions avec ce slug :</b> {rows?.length ?? 0}
+      </p>
+
+      <pre style={{ whiteSpace: "pre-wrap", opacity: 0.9 }}>
+        {JSON.stringify(rows, null, 2)}
+      </pre>
+
+      <p style={{ marginTop: 12 }}>
+        <a href="/child" style={{ textDecoration: "underline", color: "white" }}>
+          ← Retour
+        </a>
+      </p>
+    </div>
+  </div>
+);
+
 
   if (missionError || !mission) {
     return (
