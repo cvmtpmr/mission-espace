@@ -36,13 +36,14 @@ export default function SetupForm() {
 
     // Upsert du profil (crée si absent)
     const { error } = await supabase.from("profiles").upsert(
-      {
-        id: user.id,
-        role,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "id" }
-    );
+  {
+    id: user.id,
+    role,
+    onboarded: true,
+  },
+  { onConflict: "id" }
+);
+
 
     if (error) {
       setLoading(false);
