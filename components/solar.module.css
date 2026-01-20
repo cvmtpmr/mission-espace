@@ -51,21 +51,82 @@
   border-radius: 50%;
 }
 
-.planet1 {
-  width: 18px;
-  height: 18px;
-  background: #4fc3f7;
+.space {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #05003a, #000);
+  z-index: 0;
+
+  /* IMPORTANT :
+     - le fond ne bloque pas les clics du dashboard
+     - SAUF les planètes qui, elles, sont cliquables */
+  pointer-events: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.planet2 {
-  width: 26px;
-  height: 26px;
-  background: #81c784;
+/* Soleil */
+.sun {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  background: gold;
+  border-radius: 50%;
+  box-shadow: 0 0 200px rgba(255, 215, 0, 0.9);
 }
 
-.planet3 {
-  width: 34px;
-  height: 34px;
-  background: #ff8a65;
+/* Orbites animées */
+.orbit {
+  position: absolute;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  animation-name: spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* tailles des orbites */
+.orbit1 { width: 260px; height: 260px; }
+.orbit2 { width: 380px; height: 380px; }
+.orbit3 { width: 520px; height: 520px; }
+
+/* La planète est un <a> (Link) cliquable */
+.planetLink {
+  pointer-events: auto;     /* ✅ rend cliquable malgré pointer-events:none sur .space */
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  outline: none;
+}
+
+.planet {
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(255,255,255,0.6);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.planetLink:hover {
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 0 26px rgba(255,255,255,0.9);
+}
+
+.planetLink:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.75), 0 0 26px rgba(255,255,255,0.9);
+}
+
+/* tailles + couleurs */
+.planet1 { width: 18px; height: 18px; background: #4fc3f7; }
+.planet2 { width: 26px; height: 26px; background: #81c784; }
+.planet3 { width: 34px; height: 34px; background: #ff8a65; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
