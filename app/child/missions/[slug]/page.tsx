@@ -36,32 +36,15 @@ export default async function MissionBySlugPage({
     .eq("slug", params.slug)
     .single();
 
-  if (missionError || !mission) return notFound();
-
+  if (missionError || !mission) {
   return (
-    <div className="p-6 space-y-4">
-      <Link href="/child" className="underline">
-        ← Retour
-      </Link>
-
-      <h1 className="text-3xl font-bold">{mission.title}</h1>
-
-      <div className="rounded-lg border p-4 space-y-2">
-        <div>
-          <b>Slug :</b> {mission.slug}
-        </div>
-        <div>
-          <b>Statut :</b> {mission.status}
-        </div>
-        <div>
-          <b>Étoiles :</b> {mission.stars_reward}
-        </div>
-        <div>
-          <b>Date limite :</b> {String(mission.due_date)}
-        </div>
-      </div>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">MISSION NON TROUVÉE</h1>
+      <p>slug demandé : {params.slug}</p>
+      <p>Erreur : {missionError?.message ?? "aucune ligne retournée"}</p>
     </div>
   );
 }
+
 
 
