@@ -1,53 +1,40 @@
-"use client";
+// app/page.tsx
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+export default async function HomePage() {
+  const supabase = createSupabaseServerClient();
 
-export default function Home() {
-  const router = useRouter();
-  const [status, setStatus] = useState("⏳ Chargement...");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    const supabase = createSupabaseBrowserClient();
+  // Pas connecté -> landing simple
+  if (!user) {
+    return (
+      <main style={{ padding: 24 }}>
+        <h1>Mission Espace</h1>
+        <p>Bienvenue ! Connecte-toi pour continuer.</p>
+        <p>
+          <Link href="/login">Aller au login</Link>
+        </p>
+      </main>
+    );
+  }
 
-    async function go() {
-      setStatus("🔎 Vérification connexion...");
+  // Profil: 0 ou 1 (IMPORTANT)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, role")
+    .eq("id", user.id)
+    .maybeSingle();
 
-      const { data } = await supabase.auth.getUser();
-      const user = data.user;
+  // Pas de profil -> setup
+  if (!profile) redirect("/setup");
 
-      if (!user) {
-        setStatus("➡️ Pas connecté → /login");
-        router.replace("/login");
-        return;
-      }
-
-      setStatus("👤 Connecté. Lecture du profil...");
-
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-      if (error) {
-        setStatus("❌ Erreur profiles: " + error.message);
-        return;
-      }
-
-      if (!profile) {
-        setStatus("➡️ Pas de profil → /setup");
-        router.replace("/setup");
-        return;
-      }
-
-      setStatus("➡️ Redirection...");
-      router.replace(profile.role === "parent" ? "/parent" : "/child");
-    }
-
-    go();
-  }, [router]);
-
-  return <main style={{ padding: 24 }}><h1>{status}</h1></main>;
+  // Sinon -> parcours
+  if (profile.role === "parent") redirect("/parent");
+  redirect("/child");
 }
+

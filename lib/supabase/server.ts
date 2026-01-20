@@ -1,11 +1,9 @@
-import "server-only";
+// lib/supabase/server.ts
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-// ⚠️ Adapte si tu as déjà une fonction avec un autre nom.
-// L'important : utiliser NEXT_PUBLIC_* et cookies.
-export async function createSupabaseServerClient() {
-  const cookieStore = await cookies();
+export function createSupabaseServerClient() {
+  const cookieStore = cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,7 +19,8 @@ export async function createSupabaseServerClient() {
               cookieStore.set(name, value, options);
             });
           } catch {
-            // En RSC, set peut échouer, c'est OK
+            // si appelé depuis un Server Component "pur", Next peut bloquer set()
+            // ce n'est pas grave dans la plupart des cas
           }
         },
       },
@@ -29,21 +28,5 @@ export async function createSupabaseServerClient() {
   );
 }
 
-/**
- * ✅ Renvoie le profil si il existe, sinon null.
- * C'est LE fix du "Cannot coerce the result to a single JSON object".
- */
-export async function getProfileOrNull(userId: string) {
-  const supabase = await createSupabaseServerClient();
-
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .maybeSingle(); // ✅ IMPORTANT
-
-  if (error) throw error; // vraie erreur DB
-  return data; // Profil ou null
-}
 
 
