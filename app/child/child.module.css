@@ -1,7 +1,7 @@
 .page {
   position: relative;
   min-height: 100vh;
-  z-index: 1; /* au-dessus des planètes */
+  z-index: 1;
   padding: 24px;
   color: white;
 }
@@ -9,8 +9,8 @@
 .card {
   max-width: 900px;
   background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   padding: 20px;
   backdrop-filter: blur(6px);
 }
+
