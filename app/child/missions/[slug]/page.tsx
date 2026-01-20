@@ -50,6 +50,25 @@ export default async function MissionBySlugPage({
     );
   }
 
+ export default function MissionTest({ params }: { params: { slug: string } }) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "white",
+        color: "black",
+        zIndex: 99999,
+        padding: 24,
+        fontSize: 22,
+      }}
+    >
+      <h1>MISSION PAGE OK</h1>
+      <p>slug: {params.slug}</p>
+    </div>
+  );
+}
+
   return (
     <div className="p-6 space-y-4">
       <Link href="/child" className="underline">
