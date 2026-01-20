@@ -1,26 +1,72 @@
-type Props = {
+import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+export default async function MissionBySlugPage({
+  params,
+}: {
   params: { slug: string };
-};
+}) {
+  const supabase = await createClient();
 
-const TITLES: Record<string, string> = {
-  mercure: "Mission Mercure",
-  venus: "Mission Vénus",
-  terre: "Mission Terre",
-};
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-export default function MissionPage({ params }: Props) {
-  const title = TITLES[params.slug] ?? `Mission: ${params.slug}`;
+  if (!user) {
+    return <div className="p-6">Pas connecté</div>;
+  }
+
+  // On récupère la famille du child (adapter si ton projet stocke family_id ailleurs)
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("family_id")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !profile?.family_id) {
+    return (
+      <div className="p-6">
+        Erreur profile: {profileError?.message ?? "family_id manquant"}
+      </div>
+    );
+  }
+
+  const { data: mission, error: missionError } = await supabase
+    .from("missions")
+    .select("id,title,slug,due_date,stars_reward,status,created_at,family_id")
+    .eq("family_id", profile.family_id)
+    .eq("slug", params.slug)
+    .single();
+
+  if (missionError) {
+    // si pas trouvé ou RLS -> on affiche 404 (propre)
+    return notFound();
+  }
 
   return (
-    <main style={{ padding: 24, color: "white" }}>
-      <h1>{title}</h1>
-      <p>Ici tu mettras le contenu de la mission (quiz, vidéo, mini-jeu...).</p>
+    <div className="p-6 space-y-4">
+      <Link href="/child" className="underline">
+        ← Retour
+      </Link>
 
-      <div style={{ marginTop: 16 }}>
-        <a href="/child" style={{ color: "white", textDecoration: "underline" }}>
-          ← Retour à la carte
-        </a>
+      <h1 className="text-3xl font-bold">{mission.title}</h1>
+
+      <div className="rounded-lg border p-4 space-y-2">
+        <div>
+          <b>Slug :</b> {mission.slug}
+        </div>
+        <div>
+          <b>Statut :</b> {mission.status}
+        </div>
+        <div>
+          <b>Étoiles :</b> {mission.stars_reward}
+        </div>
+        <div>
+          <b>Date limite :</b> {mission.due_date}
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
+
