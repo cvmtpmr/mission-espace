@@ -2,72 +2,70 @@
   position: fixed;
   inset: 0;
   background: radial-gradient(circle at center, #05003a, #000);
-  overflow: hidden;
   z-index: 0;
   pointer-events: none;
 
-  /* 👇 DÉPLACEMENT VISIBLE */
-  transform: translateX(-35%) translateY(-10%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-
-
-
+/* 🌞 Soleil */
 .sun {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 160px;
-  height: 160px;
+  width: 140px;
+  height: 140px;
   background: gold;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 300px 120px rgba(255, 215, 0, 0.9);
+  box-shadow: 0 0 200px rgba(255, 215, 0, 0.9);
 }
 
-
-
-.planet {
-  box-shadow: 0 0 20px rgba(255,255,255,0.8);
-}
-
+/* 🔵 Orbits */
 .orbit {
-  border: 2px solid rgba(255, 255, 255, 0.25); /* au lieu de dashed 0.12 */
+  position: absolute;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
 }
-
 
 .orbit1 {
-  width: 200px;
-  height: 200px;
-  animation-duration: 12s;
+  width: 260px;
+  height: 260px;
 }
 
 .orbit2 {
-  width: 320px;
-  height: 320px;
-  animation-duration: 20s;
+  width: 380px;
+  height: 380px;
 }
 
 .orbit3 {
-  width: 460px;
-  height: 460px;
-  animation-duration: 30s;
+  width: 520px;
+  height: 520px;
 }
 
-.planet-1 { width: 26px; height: 26px; }
-.planet-2 { width: 34px; height: 34px; }
-.planet-3 { width: 42px; height: 42px; }
-
+/* 🪐 Planètes */
 .planet {
-  box-shadow: 0 0 18px rgba(255,255,255,0.6);
+  position: absolute;
+  top: 50%;
+  right: -12px;
+  transform: translateY(-50%);
+  border-radius: 50%;
 }
 
-
-@keyframes spin {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+.planet1 {
+  width: 18px;
+  height: 18px;
+  background: #4fc3f7;
 }
+
+.planet2 {
+  width: 26px;
+  height: 26px;
+  background: #81c784;
+}
+
+.planet3 {
+  width: 34px;
+  height: 34px;
+  background: #ff8a65;
+}
+
