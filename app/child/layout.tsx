@@ -8,7 +8,10 @@ export default function ChildLayout({
   return (
     <>
       <SolarSystem />
-      {children}
+      <div style={{ position: "relative", zIndex: 50 }}>
+  {children}
+</div>
+
     </>
   );
 }
