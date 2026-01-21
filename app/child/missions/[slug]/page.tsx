@@ -1,9 +1,10 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
-export default async function MissionDebugPage({
-  params,
-}: {
+export default function Page({ params }: { params: { slug: string } }) {
+  return <pre style={{ padding: 24 }}>{JSON.stringify(params, null, 2)}</pre>;
+}
+: {
   params: { slug: string };
 }) {
   const supabase = await createSupabaseServerClient();
