@@ -1,8 +1,8 @@
-export default function ChildMissionsPage() {
+export default function MissionsIndexPage() {
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Page Missions enfant</h1>
-      <p>Si tu vois ce texte, la route fonctionne 🎉</p>
+    <div style={{ padding: 24, color: "white" }}>
+      <h1>Missions (index)</h1>
+      <p>Va sur /child/missions/mercure-1</p>
     </div>
   );
 }
