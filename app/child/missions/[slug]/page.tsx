@@ -67,7 +67,11 @@ export default async function MissionDebugPage({
       <h1 style={{ fontSize: 24, fontWeight: 800 }}>DEBUG mission</h1>
 
       <p>
-        <b>slug demandé :</b> {params.slug}
+      <b>params :</b>
+<pre style={{ whiteSpace: "pre-wrap" }}>
+  {JSON.stringify(params, null, 2)}
+</pre>
+
       </p>
 
       <p>
